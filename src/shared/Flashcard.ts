@@ -1,21 +1,29 @@
-import { Entity, Fields } from "remult"
+import { Entity, Fields, Validators } from "remult";
 
 @Entity("flashcards", {
-  allowApiCrud: true
+  allowApiCrud: true,
 })
 export class Flashcard {
-  @Fields.cuid()
-  id = ""
+  @Fields.autoIncrement()
+  id = "";
 
-  @Fields.string()
-  question = ""
+  @Fields.string({
+    validate: Validators.required,
+  })
+  question = "";
 
-  @Fields.string()
-  answer = ""
+  @Fields.string({
+    validate: Validators.required,
+  })
+  answer = "";
 
-  @Fields.string()
-  questionLanguage = "de"
+  @Fields.string({
+    validate: Validators.required,
+  })
+  questionLanguage = "de";
 
-  @Fields.string()
-  answerLanguage = "en"
+  @Fields.string({
+    validate: Validators.required,
+  })
+  answerLanguage = "en";
 }
