@@ -34,11 +34,9 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState<Score>();
 
   useEffect(() => {
-    scoreRepo.liveQuery({
-      limit: 20
-    }).subscribe((info) => {
+    scoreRepo.find().then((info) => {
       // console.log('info.applyChanges', info.applyChanges)
-      setScores(info.applyChanges)
+      setScores(info)
     })
 
     const currentUser = scores.find(score => score.userId === 'Harry')
