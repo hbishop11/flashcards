@@ -2,6 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { Flashcard } from "./shared/Flashcard";
 import { FlashcardsController } from "./shared/FlashcardsController";
 import FlippingCard from "./client/FlippingCard";
+import { Score } from "./shared/Score";
+import { remult } from "remult";
+
+const scoreRepo = remult.repo(Score)
 
 const getRandomFlashcard = async (excludeId?: string) => {
   return FlashcardsController.getRandomFlashcard(excludeId);
@@ -26,36 +30,64 @@ const MESSAGES_BY_LANGUAGE = {
 
 export default function App() {
   const [flippingCard, setFlippingCard] = useState<FlippingCard | null>(null);
+  const [scores, setScores] = useState<Score[]>([])
 
-  function initCard(flashcardData: Flashcard) {
+  useEffect(() => {
+    scoreRepo.find().then(setScores)
+  }, [setScores])
+
+  const incremementScore = useCallback(async () => {
+    const currentUser = scores.find(score => score.userId === 'Harry')
+
+    console.log('currentUser', currentUser)
+
+    if (!currentUser) {
+      return scoreRepo.insert({
+        userId: 'Harry',
+        score: 1
+      })
+    }
+
+    await scoreRepo.save({
+      ...currentUser,
+      score: currentUser.score + 1
+    })
+
+    await scoreRepo.find().then((response) => {
+      console.log('response: ', response)
+      setScores(response)
+    })
+  }, [scores, setScores])
+
+  const initCard = useCallback(async () => {
+    const flashCardData = await getRandomFlashcard();
+
     const domElement = document.getElementById("root");
 
     const newCard = new FlippingCard(
       domElement,
       {
         next: () => {
-          return { value: flashcardData };
+          return { value: flashCardData };
         },
       },
       MESSAGES_BY_LANGUAGE.en
     );
 
     newCard.onWrongAnswer = newCard.onCorrectAnswer = async () => {
-      const flashCard = await getRandomFlashcard();
-      const newCard = initCard(flashCard);
-      newCard?.appear();
+      const newCard = initCard();
       setFlippingCard(newCard);
+      incremementScore()
     };
 
-    return newCard;
-  }
+    newCard.appear()
+
+    setFlippingCard(newCard);
+  }, [incremementScore, setFlippingCard, scores])
 
   const showFlashcards = useCallback(async () => {
-    const flashCard = await getRandomFlashcard();
-    const flippingCard = initCard(flashCard);
-    setFlippingCard(flippingCard);
-    flippingCard?.appear();
-  }, [setFlippingCard]);
+    initCard();
+  }, [initCard]);
 
   const hideFlashcards = useCallback(() => {
     flippingCard?.disappear();
@@ -68,6 +100,8 @@ export default function App() {
       <main>
         <button onClick={showFlashcards} style={{width: '100%'}}>Start</button>
 
+        <Leaderboard scores={scores}/>
+
         <section id="root" className={flippingCard ? "fcard__card__wrapper" : ""}>
           <button className={flippingCard ? "fcard__endPractice" : "hidden"} onClick={hideFlashcards}>
             ❌
@@ -76,4 +110,18 @@ export default function App() {
       </main>
     </div>
   );
+}
+
+const Leaderboard = ({ scores }: { scores: any[] }) => {
+  const scoresList = scores.map((score, index) => (
+    <li key={index}>{score.userId} : {score.score}</li>
+  ))
+  return (
+    <>
+      <h2>Leaderboard</h2>
+      <ol>
+        {scoresList}
+      </ol>
+    </>
+  )
 }
