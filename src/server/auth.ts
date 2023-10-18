@@ -1,5 +1,7 @@
 import express, { Router } from "express";
-import type { UserInfo } from "remult";
+import { remult, type UserInfo } from "remult";
+import { User } from "../shared/User";
+import { api } from "./api";
 
 const validUsers: UserInfo[] = [
   { id: "1", name: "Jane" },
@@ -10,8 +12,12 @@ export const auth = Router();
 
 auth.use(express.json());
 
-auth.post("/api/signIn", (req, res) => {
-  const user = validUsers.find((user) => user.name === req.body.username);
+auth.post("/api/signIn", api.withRemult, async (req, res) => {
+  const userRepo = remult.repo(User);
+
+  const user = await userRepo.findFirst({
+    name: req.body.username,
+  });
   if (user) {
     req.session!["user"] = user;
     res.json(user);
