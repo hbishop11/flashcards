@@ -81,3 +81,496 @@ header {
   min-width: 300px;
   margin: auto;
 }
+
+
+/*** Debug ***/
+
+/* Less intrusive BrowserSync notification */
+#__bs_notify__
+{
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+
+/*** General ***/
+
+*
+{
+    box-sizing: inherit;
+}
+
+html
+{
+    box-sizing: border-box;
+    font: 1.25em/1.5 sans-serif;
+    text-align: center;
+}
+
+body
+{
+    display: inline-block;
+    text-align: left;
+}
+
+body[data-fcard-active]
+{
+    overflow: hidden;
+}
+
+
+
+rt
+{
+    font-size: 70%;
+}
+
+
+
+html[data-furigana=kana-only] .kanji
+{
+    display: none;
+}
+
+html[data-furigana=kana-only] .kanji ~ rt
+{
+    display: inline;
+    font-size: 1em;
+}
+
+html[data-furigana=kanji-only] .kanji ~ rt
+{
+    display: none;
+}
+
+
+
+summary > h1:only-child
+{
+    display: inline;
+}
+
+
+/*** Table of Contents ***/
+
+.toc__wrapper
+{
+    text-align: center;
+}
+
+.toc__inner
+{
+    display: inline-block;
+    text-align: left;
+    text-align: start;
+}
+
+
+/*** Sections ***/
+
+header,
+h2
+{
+    text-align: center;
+}
+
+
+
+/*** Tables ***/
+
+table
+{
+    margin: 0 auto;
+    font-size: 1em;
+    max-width: 100%;
+    text-align: center;
+}
+
+th
+{
+    font-weight: normal;
+    font-size: 0.75em;
+    color: #666;
+}
+
+th small
+{
+    color: #666;
+}
+
+
+
+/*** Hiragana and Katakana tables ***/
+
+.kana
+{
+    font-size: 2em;
+}
+
+.kana th
+{
+    font-size: 0.5em;
+}
+
+.kana .kana__syllabogram
+{
+    margin-bottom: 1em;
+}
+
+.kana__syllabogram
+{
+    text-align: center;
+    width: 100%;
+    margin: 0;
+    padding: 0 0.5em;
+}
+
+
+.kana__romaji
+{
+    margin: 0;
+}
+
+
+.kana__syllabogram [lang=jp-Kana]
+{
+    font-size: 1.25em;
+    line-height: 1;
+}
+
+.kana__syllabogram [lang=jp-Latn]
+{
+    color: #666;
+}
+
+
+/*** Words ***/
+
+.words
+{
+    margin: 0;
+    padding: 0;
+}
+
+.words > li
+{
+    display: block;
+    margin-bottom: 1.5em;
+}
+
+
+.word > dd
+{
+    color: #666;
+}
+
+@media (min-width: 40em)
+{
+    @supports (flex-wrap: wrap)
+    {
+        .word
+        {
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .word > dt,
+        .word > dd
+        {
+            margin: 0;
+            padding: 0;
+            flex: 1 1 auto;
+        }
+
+        .word > dt
+        {
+            flex-basis: 30%;
+        }
+
+        .word > dd
+        {
+            flex-basis: 70%;
+        }
+    }
+}
+
+.fcard__card .word
+{
+    display: block;
+    text-align: center;
+}
+
+
+/*** Sentences ***/
+
+.sentences
+{
+    margin: 1.5em 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sentences > li
+{
+    margin-bottom: 3em;
+}
+
+.sentences > li:last-child
+{
+    margin-bottom: 0;
+}
+
+.sentence,
+.sentence > dt,
+.sentence > dd
+{
+    margin: 0;
+    padding: 0;
+}
+
+.sentence > dd
+{
+    color: #666;
+}
+
+
+/*** Start practise button ***/
+
+.fcard__startPractise
+{
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 1em;
+    margin: 1em;
+}
+
+
+
+/*** Practice card ***/
+
+.fcard__card__wrapper
+{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1em;
+
+    transform-origin: 50%;
+    overflow: hidden;
+
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.fcard__card__wrapper button
+{
+    padding: 0.5em;
+    margin: 1em;
+    font-size: 1.25em;
+}
+
+.fcard__endPractice
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.fcard__endPractice--attention
+{
+    animation: pop 1s cubic-bezier(0.3, -2.3, 0.7, 3.3);
+}
+
+@keyframes pop
+{
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
+
+
+.fcard__card,
+.fcard__card__question,
+.fcard__card__answer
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.fcard__card
+{
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translateX(-50%) translateY(calc(-105vh - 100%));
+    max-width: 30em;
+    max-height: 25em;
+    perspective: 60em;
+    transform-style: preserve-3d;
+}
+
+.fcard__card--onscreen,
+.fcard__card--wrong,
+.fcard__card--correct
+{
+    transition: all 0.5s ease-in-out;
+}
+
+.fcard__card--onscreen
+{
+    transition-delay: 0.3s;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 2;
+}
+
+.fcard__card--wrong
+{
+    transform: translateX(calc(-50vw - 40% - 100%)) translateY(-50%);
+}
+
+.fcard__card--correct
+{
+    transform: translateX(calc(50vw + 40%)) translateY(-50%);
+}
+
+.debug .fcard__card--wrong
+{
+    transform: translateX(calc(-25vw - 100%)) translateY(-50%);
+}
+
+.debug .fcard__card--correct
+{
+    transform: translateX(calc(25vw)) translateY(-50%);
+}
+
+.fcard__card__question,
+.fcard__card__answer
+{
+    margin: 1em;
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+    align-items: stretch;
+    overflow: auto;
+
+    background: white;
+    border: #eee solid thin;
+    box-shadow: 0.25rem 0.25rem 0.5rem #666;
+    transition: all 0.6s ease-in-out;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    text-align: center;
+}
+
+.fcard__card__question
+{
+    transform: rotateX(0deg);
+}
+
+.fcard__card__answer
+{
+    transform: rotateX(360deg);
+}
+
+.fcard__card__question--flipped
+{
+    transform: rotateX(180deg);
+}
+
+.fcard__card__answer--flipped
+{
+    transform: rotateX(180deg);
+}
+
+.fcard__card__content
+{
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    overflow: auto;
+    font-size: 1.5em;
+}
+
+/**
+ * When content overflows, this has no effect and scrollbars show up,
+ * because of `overflow:auto` above.
+ * When content is shorter, this causes to act as it had
+ * `align-items:center` — elements in content keep their height, while
+ * ::before and ::after get stretched and place it on the cetner.
+ * Based on http://stackoverflow.com/a/34455253/146399
+ */
+.fcard__card__content::before,
+.fcard__card__content::after
+{
+    content: '';
+    flex: 1 1 auto;
+}
+
+.fcard__card__content--short
+{
+    font-size: 4em;
+    padding: 0.375em; /* 1.5 / 4 */
+}
+
+.fcard__card__content--long
+{
+    text-align: left;
+    text-align: initial;
+}
+
+/**
+ * Reset margin, if question is a element of the list
+ */
+.fcard__card__content > *
+{
+    margin: 0;
+    padding: 0;
+}
+
+.fcard__card__disambiguation
+{
+    color: #666;
+}
+
+.fcard__card__disambiguation::before
+{
+    content: '(';
+}
+
+.fcard__card__disambiguation::after
+{
+    content: ')';
+}
+
+.fcard__card__examples
+{
+    font-size: 0.8em;
+}
+
+.fcard__card__examples::before
+{
+    content: ' ';
+    display: block;
+    margin: 1em 3em;
+    border-top: #666 solid thin;
+}
+
+.fcard__card__nav
+{
+    display: flex;
+    flex: 0 0 auto;
+    align-content: center;
+    justify-content: space-around;
+}

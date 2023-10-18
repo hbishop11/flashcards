@@ -1,36 +1,50 @@
 [
   {
-    "id": "0",
+    "id": 0,
     "question": "Die Katze",
     "answer": "The cat",
     "questionLanguage": "de",
     "answerLanguage": "en"
   },
   {
-    "id": "1",
+    "id": 1,
     "question": "Der Hund",
     "answer": "The dog",
     "questionLanguage": "de",
     "answerLanguage": "en"
   },
   {
-    "id": "2",
+    "id": 2,
     "question": "Die Frau",
     "answer": "The woman",
     "questionLanguage": "de",
     "answerLanguage": "en"
   },
   {
-    "id": "3",
+    "id": 3,
     "question": "Der Mann",
     "answer": "The man",
     "questionLanguage": "de",
     "answerLanguage": "en"
   },
   {
-    "id": "4",
+    "id": 4,
     "question": "Das Kind",
     "answer": "The child",
+    "questionLanguage": "de",
+    "answerLanguage": "en"
+  },
+  {
+    "id": 5,
+    "question": "Der Tisch",
+    "answer": "The table",
+    "questionLanguage": "de",
+    "answerLanguage": "en"
+  },
+  {
+    "id": 6,
+    "question": "der Radiergummi",
+    "answer": "The eraser/the rubber",
     "questionLanguage": "de",
     "answerLanguage": "en"
   }
