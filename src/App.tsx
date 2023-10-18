@@ -31,14 +31,25 @@ const MESSAGES_BY_LANGUAGE = {
 export default function App() {
   const [flippingCard, setFlippingCard] = useState<FlippingCard | null>(null);
   const [scores, setScores] = useState<Score[]>([])
+  const [currentUser, setCurrentUser] = useState<Score>();
 
   useEffect(() => {
-    scoreRepo.find().then(setScores)
-  }, [setScores])
+    scoreRepo.liveQuery({
+      limit: 20
+    }).subscribe((info) => {
+      // console.log('info.applyChanges', info.applyChanges)
+      setScores(info.applyChanges)
+    })
 
-  const incremementScore = useCallback(async () => {
     const currentUser = scores.find(score => score.userId === 'Harry')
+    setCurrentUser(currentUser)
+  }, [scores, setCurrentUser, setScores])
 
+  const incremementScore = async () => {
+    const scores = await scoreRepo.find()
+
+    const currentUser = scores.find(score => score.userId === 'Harry')
+    setCurrentUser(currentUser)
     console.log('currentUser', currentUser)
 
     if (!currentUser) {
@@ -48,18 +59,39 @@ export default function App() {
       })
     }
 
-    await scoreRepo.save({
+    const newScore = currentUser.score + 1
+
+    const newResult = await scoreRepo.save({
       ...currentUser,
-      score: currentUser.score + 1
+      score: newScore
     })
+
+    console.log('new score: ', newResult.score)
+
+    setCurrentUser(newResult)
+    setScores(scores.map(score => {
+      if (score.userId === currentUser.userId) {
+        return newResult
+      }
+      return score
+    }))
 
     await scoreRepo.find().then((response) => {
       console.log('response: ', response)
       setScores(response)
     })
-  }, [scores, setScores])
+  }
 
-  const initCard = useCallback(async () => {
+  const onWrongAnswer = useCallback(() => {
+    initCard({ onWrongAnswer, onCorrectAnswer });
+  }, [setFlippingCard, incremementScore])
+
+  const onCorrectAnswer = useCallback(() => {
+    initCard({ onWrongAnswer, onCorrectAnswer });
+    incremementScore()
+  }, [setFlippingCard, incremementScore])
+
+  const initCard = useCallback(async ({ onWrongAnswer, onCorrectAnswer }: any) => {
     const flashCardData = await getRandomFlashcard();
 
     const domElement = document.getElementById("root");
@@ -74,19 +106,21 @@ export default function App() {
       MESSAGES_BY_LANGUAGE.en
     );
 
-    newCard.onWrongAnswer = newCard.onCorrectAnswer = async () => {
-      const newCard = initCard();
-      setFlippingCard(newCard);
-      incremementScore()
+    newCard.onWrongAnswer = async () => {
+      onWrongAnswer()
+    };
+
+    newCard.onCorrectAnswer = async () => {
+      onCorrectAnswer()
     };
 
     newCard.appear()
 
     setFlippingCard(newCard);
-  }, [incremementScore, setFlippingCard, scores])
+  }, [incremementScore, setFlippingCard, flippingCard, scores])
 
   const showFlashcards = useCallback(async () => {
-    initCard();
+    initCard({ onWrongAnswer, onCorrectAnswer });
   }, [initCard]);
 
   const hideFlashcards = useCallback(() => {
