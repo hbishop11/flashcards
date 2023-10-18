@@ -7,15 +7,25 @@ const getRandomFlashcard = async (excludeId?: string) => {
   return FlashcardsController.getRandomFlashcard(excludeId);
 };
 
-export default function App() {
-  const [Flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const [flippingCard, setFlippingCard] = useState<FlippingCard | null>(null);
-  const [isFlipping, setIsFlipping] = useState(false);
-  const [cardIndex, setCardIndex] = useState(0);
+const MESSAGES_BY_LANGUAGE = {
+  en: {
+      startPractice: 'Start prac­tice',
+      revealAnswer: '↷ show answer',
+      gotItWrong: '😞 got it wrong',
+      gotItCorrect: '😃 got it cor­rect',
+      noItemsError: 'No flippin’ items found. 😞'
+  },
+  pl: {
+      startPractice: 'Rozpo­cznij naukę',
+      revealAnswer: '↷ pokaż odpo­wiedź',
+      gotItWrong: '😞 nie wie­działem',
+      gotItCorrect: '😃 wie­działem',
+      noItemsError: 'Nie znalazłem żadnych elementów do uczenia. 😞'
+  }
+};
 
-  // useEffect(() => {
-  //   FlashcardRepo.find().then(setFlashcards);
-  // }, []);
+export default function App() {
+  const [flippingCard, setFlippingCard] = useState<FlippingCard | null>(null);
 
   function initCard(flashcardData: Flashcard) {
     const domElement = document.getElementById("root");
@@ -27,17 +37,14 @@ export default function App() {
           return { value: flashcardData };
         },
       },
-      []
+      MESSAGES_BY_LANGUAGE.en
     );
 
     newCard.onWrongAnswer = newCard.onCorrectAnswer = async () => {
       const flashCard = await getRandomFlashcard();
-      // console.log("on correct!");
-      // setCardIndex(cardIndex + 1);
-
       const newCard = initCard(flashCard);
-
       newCard?.appear();
+      setFlippingCard(newCard);
     };
 
     return newCard;
@@ -46,36 +53,26 @@ export default function App() {
   const showFlashcards = useCallback(async () => {
     const flashCard = await getRandomFlashcard();
     const flippingCard = initCard(flashCard);
-
     setFlippingCard(flippingCard);
     flippingCard?.appear();
-    setIsFlipping(true);
-  }, [Flashcards, setFlippingCard]);
+  }, [setFlippingCard]);
 
   const hideFlashcards = useCallback(() => {
+    flippingCard?.disappear();
     setFlippingCard(null);
-    setIsFlipping(false);
-  }, [setFlippingCard, setIsFlipping]);
+  }, [flippingCard, setFlippingCard]);
 
   return (
     <div>
       <h1>Flashcards</h1>
       <main>
-        <button onClick={showFlashcards}>Start</button>
+        <button onClick={showFlashcards} style={{width: '100%'}}>Start</button>
 
-        <section id="root" className={isFlipping ? "fcard__card__wrapper" : ""}>
-          <button className="fcard__endPractice" onClick={hideFlashcards}>
+        <section id="root" className={flippingCard ? "fcard__card__wrapper" : ""}>
+          <button className={flippingCard ? "fcard__endPractice" : "hidden"} onClick={hideFlashcards}>
             ❌
           </button>
         </section>
-        {/* {Flashcards.map(Flashcard => {
-          return (
-            <div key={Flashcard.id}>
-              <p>{Flashcard.question}</p>
-              <p>{Flashcard.answer}</p>
-            </div>
-          )
-        })} */}
       </main>
     </div>
   );

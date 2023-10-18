@@ -5,6 +5,7 @@ body {
   background-color: whitesmoke;
   justify-content: center;
   margin: 0;
+  overflow-x: hidden
 }
 
 h1 {
@@ -573,4 +574,9 @@ th small
     flex: 0 0 auto;
     align-content: center;
     justify-content: space-around;
+}
+
+
+.hidden {
+  display: none;
 }

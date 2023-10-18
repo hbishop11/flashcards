@@ -1,3 +1,5 @@
+// Shamelessly stolen from Marek https://github.com/marek-saji/flipping-cards
+
 /**
  * Length above which content is considered short
  */
@@ -19,7 +21,7 @@ var CONTENT_LENGTH_LONG = 100;
  */
 export default class FlippingCard
 {
-    public messages: [];
+    public messages: any;
 
     constructor(container: any, itemGenerator: any, messages: any) {
         if (!(container instanceof Element))
@@ -36,7 +38,6 @@ export default class FlippingCard
         }
     
         this.messages = messages;
-    
     
         this.setItemGenerator = itemGenerator;
         this.prepareDom(container);
