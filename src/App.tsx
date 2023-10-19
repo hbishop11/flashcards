@@ -41,7 +41,7 @@ export default function App() {
 
     const currentUser = scores.find(score => score.userId === 'Harry')
     setCurrentUser(currentUser)
-  }, [scores, setCurrentUser, setScores])
+  }, [setCurrentUser, setScores])
 
   const incremementScore = async () => {
     const scores = await scoreRepo.find()
